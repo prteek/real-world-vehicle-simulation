@@ -22,7 +22,6 @@ plotly
 
 ## ML
 scikit-learn
-pykitml
 
 ## twitter
 twython
