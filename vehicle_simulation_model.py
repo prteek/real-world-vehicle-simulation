@@ -1,4 +1,9 @@
+# author           : Prateek
+# email            : prateekpatel.in@gmail.com
+# description      : Real world vehicle drigins simulation of electric vehicle
+
 import os
+
 os.system('pip install -U -r ßrequirements.txt')
 
 import time as TT

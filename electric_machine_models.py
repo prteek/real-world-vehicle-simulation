@@ -1,3 +1,7 @@
+# author           : Prateek
+# email            : prateekpatel.in@gmail.com
+# description      : electric machine model library
+
 import numpy as np
 
 

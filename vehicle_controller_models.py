@@ -1,5 +1,8 @@
-import numpy as np
+# author           : Prateek
+# email            : prateekpatel.in@gmail.com
+# description      : vehicle controllers model library
 
+import numpy as np
 
 class simple_vehicle_controller:
     driveline_efficiency = 0.98  # [frac]

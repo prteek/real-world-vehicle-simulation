@@ -1,5 +1,8 @@
-import plotly.graph_objects as go
+# author           : Prateek
+# email            : prateekpatel.in@gmail.com
+# description      : utilities library
 
+import plotly.graph_objects as go
 
 def plt_plot(**kwargs):
     fig = go.Figure()

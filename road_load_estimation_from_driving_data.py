@@ -1,4 +1,10 @@
+# author           : Prateek
+# email            : prateekpatel.in@gmail.com
+# description      : Modelling road load behaviour based on real-time driving data
+
 import os
+
+os.system("pip install -U -r requirements.txt")
 
 import numpy as np
 import pandas as pd
