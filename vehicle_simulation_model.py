@@ -1,3 +1,6 @@
+import os
+os.system('pip install -U -r ßrequirements.txt')
+
 import time as TT
 import numpy as np
 import pandas as pd
