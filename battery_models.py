@@ -1,3 +1,7 @@
+# author           : Prateek
+# email            : prateekpatel.in@gmail.com
+# description      : Battery models library
+
 import numpy as np
 
 

@@ -1,13 +1,9 @@
-import os
-
-# os.system('pip install -U -r requirements.txt')
+# author           : Prateek
+# email            : prateekpatel.in@gmail.com
+# description      : Brake power estimation library
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-
-from statsmodels.distributions.empirical_distribution import ECDF
-
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
@@ -15,14 +11,6 @@ from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.tree import plot_tree
-from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import cross_val_score
-
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-
-import time as TT
 
 
 def get_required_signals(data):
