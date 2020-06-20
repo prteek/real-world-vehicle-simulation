@@ -1,3 +1,6 @@
+import os
+os.system('pip install -U -r requirements.txt')
+
 import plotly.graph_objects as go
 import numpy as np
 from utility_functions import *
