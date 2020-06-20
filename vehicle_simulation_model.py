@@ -4,7 +4,7 @@
 
 import os
 
-os.system('pip install -U -r ßrequirements.txt')
+os.system('pip install -U -r requirements.txt')
 
 import time as TT
 import numpy as np
