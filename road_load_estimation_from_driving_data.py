@@ -430,18 +430,108 @@ plt.show()
 fig = plt.figure()
 plt.plot(
     speed_meters_per_second,
-    rfr.predict(x_values_rfr),
+    rfr.predict(x_values_rfr) / 1000,
     ".",
     alpha=0.1,
     label="random forest model",
 )
 plt.plot(
     speed_meters_per_second,
-    lin_reg.predict(x_values),
+    lin_reg.predict(x_values) / 1000,
     ".",
     alpha=0.1,
     label="linear regression",
 )
 plt.legend()
+plt.xlabel("speed [m/s]")
+plt.ylabel("Predicted RL [kW]")
 plt.grid()
 plt.show()
+
+
+### Converting rfr to predict using gradient data
+
+x_model_input, y_to_fit, _, gradient_power = transform_data(
+    X_positive_power, model="rfr"
+)
+
+y_to_fit = y_to_fit + gradient_power
+x_model_input = np.c_[x_model_input, grade[positive_power_index]]
+
+x_train, x_test, y_train, y_test = train_test_split(
+    x_model_input, y_to_fit, test_size=0.20, random_state=42
+)
+
+pca = PCA(n_components=x_model_input.shape[1])
+x_train = pca.fit_transform(x_train)
+
+rfr = RandomForestRegressor(bootstrap=True, min_samples_leaf=10)
+
+param_grid = [{"max_depth": [1, 2]}, {"n_estimators": [4, 8, 16]}]
+
+grid_search = GridSearchCV(
+    rfr,
+    param_grid,
+    cv=8,
+    scoring="neg_mean_squared_error",
+    return_train_score=True,
+    n_jobs=4,
+)
+grid_search.fit(x_train, y_train)
+
+print("best parameters:", grid_search.best_params_)
+
+rfr = grid_search.best_estimator_
+
+train_predict = rfr.predict(x_train)
+print(
+    "RMSE train rf:",
+    np.round(np.sqrt(mean_squared_error(train_predict, y_train)), 0),
+    " \t GOF:",
+    np.round(r2_score(train_predict, y_train), 2),
+)
+
+x_test = pca.transform(x_test)
+test_predict = rfr.predict(x_test)
+print(
+    "RMSE test rf:",
+    np.round(np.sqrt(mean_squared_error(test_predict, y_test)), 0),
+    " \t GOF:",
+    np.round(r2_score(test_predict, y_test), 2),
+)
+
+
+x_values_rfr, power_to_fit_rfr, inertia_power, gradient_power = transform_data(
+    X, model="rfr"
+)
+
+x_values_rfr = np.c_[x_values_rfr, grade]
+x_values_rfr = pca.transform(x_values_rfr)
+
+fig = plt.figure()
+plt.plot(
+    speed_meters_per_second,
+    rfr.predict(x_values_rfr) / 1000,
+    ".",
+    alpha=0.1,
+    label="random forest model",
+)
+
+median_mass = np.median(mass)
+speed_mps = np.arange(100) / 3.6
+x_speed_only = np.c_[
+    speed_mps, np.ones(len(speed_mps)) * median_mass, np.zeros(len(speed_mps))
+]
+
+x_values_rfr = pca.transform(x_speed_only)
+
+plt.plot(speed_mps, rfr.predict(x_values_rfr) / 1000, ".", label="only effect of speed")
+
+plt.xlabel("speed [m/s]")
+plt.ylabel("Predicted RL [kW]")
+plt.grid()
+plt.legend()
+plt.show()
+
+
+plt.close("all")
