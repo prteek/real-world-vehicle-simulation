@@ -2,10 +2,6 @@
 # email             : prateekpatel.in@gmail.com
 # description       : Unit test for battery models
 
-import os
-
-os.system('pip install -U -r requirements.txt')
-
 from battery_models import constant_parameter_battery
 
 
