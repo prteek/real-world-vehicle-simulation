@@ -1,31 +1,20 @@
 ## Working environment
-pip
 jupyterlab
 nbdime
-pixiedust
 joblib
-pydotplus
-dill
-pyflakes
+flake8
+black
+pytest
 
 ## core scientific
 numpy
 pandas
 scipy
 dask[complete]
-statsmodels
 
 ## Visualisation
-seaborn
 matplotlib
 plotly
 
 ## ML
 scikit-learn
-
-## twitter
-twython
-geopy
-
-## vision
-opencv-python
