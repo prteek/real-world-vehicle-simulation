@@ -210,7 +210,7 @@ residuals = y_train - train_predict
 
 fig = plt.figure()
 plt.subplot(1, 2, 1)
-plt.hist(x=residuals / 1000, normed=True, bins=50)
+plt.hist(x=residuals / 1000,density=True, bins=50)
 plt.title("Probability distribution of residuals")
 plt.xlabel("residuals")
 plt.ylabel("probability")
@@ -326,7 +326,7 @@ residuals = y_train - train_predict
 
 fig = plt.figure()
 plt.subplot(1, 2, 1)
-plt.hist(x=residuals / 1000, normed=True, bins=50)
+plt.hist(x=residuals / 1000, density=True, bins=50)
 plt.title("Probability distribution of residuals")
 plt.xlabel("residuals")
 plt.ylabel("probability")
