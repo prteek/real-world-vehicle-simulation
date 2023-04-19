@@ -5,6 +5,7 @@ joblib
 flake8
 black
 pytest
+python-dotenv
 
 ## core scientific
 numpy
@@ -18,3 +19,7 @@ plotly
 
 ## ML
 scikit-learn
+
+## Data
+s3fs
+fsspec
