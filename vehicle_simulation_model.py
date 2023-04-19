@@ -53,7 +53,7 @@ column_names = [
 results = pd.DataFrame(columns=column_names)
 
 
-data = pd.read_csv("./data.csv")
+data = pd.read_csv("s3://vehicle-sim-model/data.csv")
 timestamp = np.array(data["timestamp"])
 
 (

@@ -24,7 +24,7 @@ import time as TT
 
 
 ### Get data
-data = pd.read_csv("./data.csv")
+data = pd.read_csv("s3://vehicle-sim-model/data.csv")
 
 ### Get required signals
 speed_dl = np.array(data["KPH_DL"], dtype="float")
