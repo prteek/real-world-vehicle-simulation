@@ -2,26 +2,22 @@
 # email            : prateekpatel.in@gmail.com
 # description      : Post processing simulation results
 
-import plotly.graph_objects as go
-import numpy as np
-from utility_functions import *
+import matplotlib.pyplot as plt
 
 from vehicle_simulation_model import *  # This will run the simulation and import all the variables generated in the process
 
 x = time
-fig = plt_plot(x=x, y=speed_meters_per_second * 3.6, name="speed [km/h]")
-fig.add_scatter(x=x, y=battery_soc * 100, name="battery soc [%]")
-fig.add_scatter(x=x, y=battery_current / 10, name="battery current [A]")
-fig.add_scatter(
-    x=x,
-    y=(np.append(0, np.diff(timestamp)) > 1800) * np.append(0, np.diff(timestamp)) / 60,
-    name="charging window [minutes]",
+plt.plot(x, speed_meters_per_second * 3.6, label="speed [km/h]")
+plt.plot(x, battery_soc * 100, label="battery soc [%]")
+plt.plot(x, battery_current / 10, label="battery current [A]")
+plt.plot(x, (np.append(0, np.diff(timestamp)) > 1800) * np.append(0, np.diff(timestamp)) / 60,
+    label="charging window [minutes]",
 )
-fig.update_layout(
-    title="Example day of driving",
-    xaxis_title="time [sec]",
-    xaxis_range=[0, 3830],
-    yaxis_title="signal values",
-    yaxis_range=[0, 150],
-)
-fig.show()
+plt.title("Example day of driving")
+plt.xlabel("time [sec]")
+plt.ylabel("signal values")
+plt.xlim([0, 3830])
+plt.ylim([0, 150])
+plt.legend()
+plt.show()
+plt.savefig("simulation_output.png")
