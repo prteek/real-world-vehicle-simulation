@@ -16,7 +16,7 @@ ax.plot(
     label="charging window [minutes]",
 )
 ax.set_title("Example day of driving")
-ax.set_xlabel("time [sec]")
+ax.set_xlabel("driving duration [sec]")
 ax.set_ylabel("signal values")
 ax.set_xlim([0, 3830])
 ax.set_ylim([0, 150])
