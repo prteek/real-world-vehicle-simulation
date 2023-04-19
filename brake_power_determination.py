@@ -102,7 +102,7 @@ def transform_data(X, model="lin_reg"):
     mass = X[:, 3]
     grade = X[:, 4]
 
-    aero_power = speed_meters_per_second ** 3
+    aero_power = speed_meters_per_second**3
     rolling_resistance_power = mass * 9.8 * np.cos(grade) * speed_meters_per_second
     gradient_power = mass * 9.8 * np.sin(grade) * speed_meters_per_second
 
@@ -126,7 +126,8 @@ def transform_data(X, model="lin_reg"):
 
 def prepare_data_for_ml_model_training(data):
     """Prepare input data for linear regression model RL power = a*v + b*v^3 for only propulsion part,
-    where brakes should possibly not be active and powertrain power = RL power + grade power + inertia power"""
+    where brakes should possibly not be active and powertrain power = RL power + grade power + inertia power
+    """
     (
         _,
         _,
@@ -195,7 +196,8 @@ def calculate_brake_power(rl_model, data):
     """Brake power is left over of Powertrain - grade - RL - inertia, considered only during following scenarios:
     Brake power can only be observed if accelerator pedal is released
     Brake power can only absorb energy from vehicle (so it is always -ve)
-    Brake power only exists if there is intent of deceleration i.e. powertrain power + brake power <= 0"""
+    Brake power only exists if there is intent of deceleration i.e. powertrain power + brake power <= 0
+    """
     (
         _,
         _,

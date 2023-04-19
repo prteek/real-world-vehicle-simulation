@@ -4,6 +4,7 @@
 
 import numpy as np
 
+
 class simple_vehicle_controller:
     driveline_efficiency = 0.98  # [frac]
     wheel_radius = 1.013 / 2  # [m]

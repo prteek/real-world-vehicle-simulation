@@ -76,7 +76,7 @@ def transform_data(X, model="lin_reg"):
     mass = X[:, 3]
     grade = X[:, 4]
 
-    aero_power = speed_meters_per_second ** 3
+    aero_power = speed_meters_per_second**3
     rolling_resistance_power = mass * 9.8 * np.cos(grade) * speed_meters_per_second
     gradient_power = mass * 9.8 * np.sin(grade) * speed_meters_per_second
 
@@ -210,7 +210,7 @@ residuals = y_train - train_predict
 
 fig = plt.figure()
 plt.subplot(1, 2, 1)
-plt.hist(x=residuals / 1000,density=True, bins=50)
+plt.hist(x=residuals / 1000, density=True, bins=50)
 plt.title("Probability distribution of residuals")
 plt.xlabel("residuals")
 plt.ylabel("probability")
