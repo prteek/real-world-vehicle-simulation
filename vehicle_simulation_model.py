@@ -1,6 +1,6 @@
 # author           : Prateek
 # email            : prateekpatel.in@gmail.com
-# description      : Real world vehicle drigins simulation of electric vehicle
+# description      : Real world vehicle origins simulation of electric vehicle
 
 
 import time as TT
@@ -118,7 +118,6 @@ ev_opportunistic_potential_charge_events = 0
 # second by second simulation to calculate soc
 
 for i in range(len(timestamp)):
-
     if (timestamp[i] - time_previous) > opportunistic_charging_threshold:
         ev_opportunistic_potential_charge_time = (
             ev_opportunistic_potential_charge_time + (timestamp[i] - time_previous)

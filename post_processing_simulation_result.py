@@ -10,7 +10,9 @@ fig, ax = plt.subplots(figsize=(10, 5))
 ax.plot(time, speed_meters_per_second * 3.6, label="speed [km/h]")
 ax.plot(time, battery_soc * 100, label="battery soc [%]")
 ax.plot(time, battery_current / 10, label="battery current [A]")
-ax.plot(time, (np.append(0, np.diff(timestamp)) > 1800) * np.append(0, np.diff(timestamp)) / 60,
+ax.plot(
+    time,
+    (np.append(0, np.diff(timestamp)) > 1800) * np.append(0, np.diff(timestamp)) / 60,
     label="charging window [minutes]",
 )
 ax.set_title("Example day of driving")
