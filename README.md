@@ -33,3 +33,8 @@ vehicle is unable to make it to the next opportunistic charging event.
 This indicates that potentially a bigger battery may be more helpful than a quicker charger to deliver required duty.
 
 
+## Running the simulation
+The simulation is written in python and the main simulation code lives in `vehicle_simulation_model.py`.  
+This file can be used to run simulation for different settings or trip data.  
+Alternatively, one can just run `post_processing_simulation_result.py` to see the results of the simulation (plot above).
+
