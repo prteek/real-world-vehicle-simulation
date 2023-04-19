@@ -15,46 +15,8 @@ from battery_models import constant_parameter_battery
 
 t = TT.time()
 
-column_names = [
-    "coefficients",
-    "scaled_coefficients",
-    "train_rmse",
-    "train_gof",
-    "test_rmse",
-    "test_gof",
-    "logged_distance",
-    "logged_driving_time",
-    "logged_total_time",
-    "logged_fuel_consumption",
-    "logged_propulsion_energy",
-    "logged_brake_energy",
-    "logged_start_time_of_first_trip",
-    "logged_end_time_of_last_trip",
-    "logged_number_of_trips",
-    "ev_distance",
-    "ev_driving_time",
-    "ev_total_time",
-    "ev_opportunistic_charge_total_events",
-    "ev_opportunistic_charge_time",
-    "ev_opportunistic_charge_energy",
-    "ev_opportunistic_potential_charge_events",
-    "ev_opportunistic_potential_charge_time",
-    "ev_battery_propulsion_energy",
-    "ev_battery_regen_energy",
-    "ev_battery_max_propulsion_power",
-    "ev_battery_max_regen_power",
-    "ev_min_soc",
-    "ev_average_soc",
-    "ev_end_of_day_soc",
-    "ev_fuel_saved",
-    "file_name",
-]
-
-results = pd.DataFrame(columns=column_names)
-
-
 data = pd.read_csv("s3://vehicle-sim-model/data.csv")
-timestamp = np.array(data["timestamp"])
+timestamp = np.array(data["time"])
 
 (
     dt,
@@ -208,7 +170,7 @@ for i in range(len(timestamp)):
 
 # ------------------------------------------------------------------------------------- #
 
-# Post processing simulation results
+# Post-processing simulation results
 
 ev_distance = np.trapz(speed_meters_per_second * (battery_soc > 0), time)
 ev_driving_time = np.sum((battery_soc > 0)) * dt  # active trip time
@@ -230,6 +192,42 @@ ev_average_soc = np.mean(battery_soc[battery_soc > 0])
 ev_fuel_saved = (
     np.trapz(data["Fuel_Rate"] * (battery_soc > 0), time) / 3600 / 1000
 )  # [m^3/sec]
+
+
+column_names = [
+    "coefficients",
+    "scaled_coefficients",
+    "train_rmse",
+    "train_gof",
+    "test_rmse",
+    "test_gof",
+    "logged_distance",
+    "logged_driving_time",
+    "logged_total_time",
+    "logged_fuel_consumption",
+    "logged_propulsion_energy",
+    "logged_brake_energy",
+    "logged_start_time_of_first_trip",
+    "logged_end_time_of_last_trip",
+    "logged_number_of_trips",
+    "ev_distance",
+    "ev_driving_time",
+    "ev_total_time",
+    "ev_opportunistic_charge_total_events",
+    "ev_opportunistic_charge_time",
+    "ev_opportunistic_charge_energy",
+    "ev_opportunistic_potential_charge_events",
+    "ev_opportunistic_potential_charge_time",
+    "ev_battery_propulsion_energy",
+    "ev_battery_regen_energy",
+    "ev_battery_max_propulsion_power",
+    "ev_battery_max_regen_power",
+    "ev_min_soc",
+    "ev_average_soc",
+    "ev_end_of_day_soc",
+    "ev_fuel_saved",
+    "file_name",
+]
 
 file_results = pd.DataFrame(
     [
@@ -271,10 +269,8 @@ file_results = pd.DataFrame(
     columns=column_names,
 )
 
-results = results.append(file_results, ignore_index=True)
-
+results = file_results.copy()
 # --------------------------------  End of simulation ------------------------------------ #
-
 
 results.to_csv("ev_requirements.csv")
 
