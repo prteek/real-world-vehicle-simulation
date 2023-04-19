@@ -14,7 +14,7 @@ In addition it can help design
 * Charging system by understanding how much opportunistic charging is available and how to maximize it
 
 
-![sim_result](./simulation_output.png)
+![sim_result_scenario_1](./simulation_output_scenario_1.png)
 
 ## Interpretation
 The simulation is based on a driving cycle of 1 day worth of vehicle usage. Since the vehicle can be charged overnight,  
@@ -32,9 +32,13 @@ are not well utilised since the battery is almost fully charged then. But during
 vehicle is unable to make it to the next opportunistic charging event.  
 This indicates that potentially a bigger battery may be more helpful than a quicker charger to deliver required duty.
 
+![sim_result_scenario_2](./simulation_output_scenario_2.png)
+
+Under an alternate scenario which considers a large battery (120kWh) with same charging system, it was possible to get through to 
+an opportunistic charging event later in the day and thereby charge battery enough to get deliver duty for the rest of the day, as is visible from `battery soc` plot.
 
 ## Running the simulation
 The simulation is written in python and the main simulation code lives in `vehicle_simulation_model.py`.  
 This file can be used to run simulation for different settings or trip data.  
-Alternatively, one can just run `post_processing_simulation_result.py` to see the results of the simulation (plot above).
+Alternatively, one can just run `post_processing_simulation_result.py` to see the results of the simulation under 2 different scenarios (plots above).
 
