@@ -47,14 +47,13 @@ column_names = [
     "ev_average_soc",
     "ev_end_of_day_soc",
     "ev_fuel_saved",
-    "avit_name",
     "file_name",
 ]
 
 results = pd.DataFrame(columns=column_names)
 
 
-data = pd.read_csv("./datalog.csv")
+data = pd.read_csv("./data.csv")
 timestamp = np.array(data["timestamp"])
 
 (
@@ -114,8 +113,7 @@ wheel_torque = power_at_wheels / (wheel_speed + np.finfo(float).eps)  # safe div
 brake_torque = brake_power / (wheel_speed + np.finfo(float).eps)  # safe divide
 
 # Properties of driving day
-current_file_name = "datalog.csv"
-avit_name = "1234"
+current_file_name = "data.csv"
 logged_distance = np.trapz(speed_meters_per_second, time)
 logged_driving_time = time[-1]
 logged_total_time = timestamp[-1] - timestamp[0]
@@ -267,7 +265,6 @@ file_results = pd.DataFrame(
             ev_average_soc,
             ev_end_of_day_soc,
             ev_fuel_saved,
-            avit_name,
             current_file_name,
         ]
     ],
