@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Publish to Hugging Face (locally: `hf auth login` as prteek; in CI: HF_TOKEN):
-#   dataset       prteek/drive-cycle: data/data.csv with dataset/README.md as the card; by hand, since the data is not
-#                 in git (CI publishes only the card)
+#   dataset       prteek/drive-cycle: data/data.csv, road_load.json (the frozen road-load model from
+#                 vehicle_sim.drive_cycle) and dataset/README.md as the card; by hand, since the data is not in git
+#                 (CI publishes only the card)
 #   dataset-card  only the dataset card
 #   space         prteek/electric-truck-battery-sizing: space/ (app, card, requirements) plus vehicle_sim; the app
 #                 downloads the data from the dataset
@@ -21,6 +22,8 @@ for t in "${targets[@]}"; do
     dataset)
       mkdir "$stage/dataset"
       cp data/data.csv "$stage/dataset/"
+      ${PYTHON:-uv run python} -c "import json; from vehicle_sim.drive_cycle import road_load; print(json.dumps(road_load(), indent=1))" \
+        > "$stage/dataset/road_load.json"
       cp dataset/README.md "$stage/dataset/README.md"
       "${hf[@]}" upload prteek/drive-cycle "$stage/dataset" . --repo-type dataset --commit-message "$msg" ;;
     dataset-card)

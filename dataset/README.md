@@ -38,9 +38,20 @@ Rows are logged only while the truck is running: a jump in `time_s` larger than 
 | `road_grade_pct` | road grade [%], averaged |
 
 Power at the wheels is engine torque × overall gear ratio × transmission output speed. Brake power is not logged; the
-code estimates it with a road-load model.
+code estimates it as what is left after road load, grade and inertia whenever the driver is off the accelerator and
+slowing down.
+
+## Road load (`road_load.json`)
+
+The road-load model, frozen: power [W] = `rolling` × mass × g × cos(grade) × speed + `aero` × speed³ (speed in m/s,
+grade = `road_grade_pct` / 100). It was fitted by least squares on the whole 428 km log this stretch came from, on the
+moments the truck was driving rather than braking (R² 0.74 on a held-out 30%); the stretch alone is too uniform in
+speed to separate the two terms.
 
 ```python
-import pandas as pd
-log = pd.read_csv("hf://datasets/prteek/drive-cycle/data.csv")
+import json, pandas as pd
+from huggingface_hub import hf_hub_download
+
+log = pd.read_csv(hf_hub_download("prteek/drive-cycle", "data.csv", repo_type="dataset"))
+road_load = json.load(open(hf_hub_download("prteek/drive-cycle", "road_load.json", repo_type="dataset")))
 ```

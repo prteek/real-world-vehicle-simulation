@@ -20,8 +20,22 @@ POWER_FILTER_TC = 2  # [samples] first-order filter on power at the wheels (engi
 # Road load [W] = ROLLING * mass * g * cos(grade) * v + AERO * v^3, fitted by least squares on the moments the truck
 # was driving rather than braking, over the whole 428 km log it came from (R^2 0.74 on a held-out 30%). The published
 # data is only the first 3,830 s of driving, which is too uniform in speed to separate the two terms.
+# Frozen once derived; published with the dataset as road_load.json (see road_load()).
 ROLLING = 0.011932077183171142
 AERO = 2.7376895505031347  # [kg/m]
+
+
+def road_load() -> dict:
+    """The frozen road-load model, as published with the dataset (road_load.json)."""
+    return {
+        "formula": "road_load_power_w = rolling * mass_kg * g * cos(grade) * speed_mps + aero * speed_mps**3",
+        "rolling": ROLLING,
+        "aero_kg_per_m": AERO,
+        "g_mps2": G,
+        "grade": "road_grade_pct / 100",
+        "fitted_on": "the whole 428 km log the published stretch came from, by least squares (no intercept) on the "
+                     "moments the truck was driving rather than braking; R^2 0.74 on a held-out 30%",
+    }
 
 
 def load_from_hub() -> pd.DataFrame:

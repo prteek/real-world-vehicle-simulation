@@ -26,3 +26,10 @@ def test_first_order_filter_follows_a_step():
     out = first_order_filter(np.r_[0.0, np.ones(20)], tc=2)
     assert out[0] == 0 and 0 < out[1] < out[5] < out[-1] < 1
     assert np.isclose(out[1], 1 - np.exp(-1 / 2))
+
+
+def test_road_load_is_frozen_and_physical():
+    from vehicle_sim.drive_cycle import AERO, ROLLING, road_load
+
+    assert 0 < ROLLING < 0.05 and AERO > 0  # rolling resistance coefficient and drag term
+    assert road_load()["rolling"] == ROLLING and road_load()["aero_kg_per_m"] == AERO
