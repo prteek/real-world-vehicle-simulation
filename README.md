@@ -1,44 +1,64 @@
 # real-world-vehicle-simulation
-Modelling to understand the behaviour of a real world vehicle
 
-This repo is an example in how would an electric vehicle behave if it were to replace a conventional vehicle  
-using a sample driving trip.  
-The idea is to simulate behaviours relevant to battery that are not in the data due to vehicle being a diesel powertrain. 
-* Battery current
-* Battery State of charge
-* Effect of opportunistic charging
+Could an electric truck do the job of a diesel one? A stretch of a diesel heavy truck's real driving (the first 3,830 s
+of driving: 58 km over 14 hours, 15 to 32 tonnes) is replayed second by second as if the truck were electric. The log
+has no battery signals, so the simulation supplies them: battery current, state of charge, and the effect of
+opportunistic charging, where the truck is plugged in whenever it is parked long enough.
 
-Such analysis can help determine the capacity of battery to that can realistically replace a conventional drivetrain.  
-In addition it can help design 
-* Electric machine/power electronics by understanding realistically required power limits to fulfil the driving cycle
-* Charging system by understanding how much opportunistic charging is available and how to maximize it
+**Live app:** https://huggingface.co/spaces/prteek/electric-truck-battery-sizing · **Data:** https://huggingface.co/datasets/prteek/drive-cycle
 
+## Layout
 
-![sim_result_scenario_1](./simulation_output_scenario_1.png)
+```
+vehicle_sim/            the model
+  drive_cycle.py        loads the data; power at the wheels and brake power from a road-load model
+  simulation.py         simulate(cycle, battery kWh, charger kW, shortest stop) -> trace and summary
+space/                  Gradio app: app.py, Space card, requirements
+dataset/README.md       the dataset card
+publish.sh              upload the dataset and/or the Space
+wait_for_space.py       wait until the Space runs its latest commit (used by CI)
+tests/                  drive cycle, simulation and app
+```
 
-## Interpretation
-The simulation is based on a driving cycle of 1 day worth of vehicle usage. Since the vehicle can be charged overnight,  
-battery SOC starts at 100% but as the day progresses, it drops with vehicle usage (ultimately to 0%).  
-This is a result of choice of battery capacity (assumed 70 kWh), indicating that a much larger battery would be required to
-replace a conventional vehicle that follows this usage pattern.
+## Common tasks
 
-The simulation also shows the effect of opportunistic charging.
-Opportunistic charging is charging the vehicle when it is parked and not in use. There are two effects at play here,
-one is that unless the vehicle is parked for a substantial time (assumed 30 min or more), there may not be a motivation to plug the vehicle in.  
-The other is that the vehicle may only be able to charge at the maximum rate of the designed charging system (assumed 8.75 kW or 8 hours to full charge).
+```bash
+uv sync                                       # package + app + dev groups
+uv run pytest -q
 
-Under such opportunistic charging and battery capacity constraints, it can be observed that charging opportunities earlier in the day
-are not well utilised since the battery is almost fully charged then. But during the day depletion of battery is excessive and the
-vehicle is unable to make it to the next opportunistic charging event.  
-This indicates that potentially a bigger battery may be more helpful than a quicker charger to deliver required duty.
+uv run python space/app.py                    # app on http://127.0.0.1:7860
+./publish.sh "message" dataset space          # publish (targets: dataset, dataset-card, space; default dataset space)
+```
 
-![sim_result_scenario_2](./simulation_output_scenario_2.png)
+## Publishing from CI
 
-Under an alternate scenario which considers a large battery (120kWh) with same charging system, it was possible to get through to 
-an opportunistic charging event later in the day and thereby charge battery enough to get deliver duty for the rest of the day, as is visible from `battery soc` plot.
+Pushes to `master` publish to Hugging Face with the `HF_TOKEN` repository secret (both workflows can also be run by
+hand):
 
-## Running the simulation
-The simulation is written in python and the main simulation code lives in `vehicle_simulation_model.py`.  
-This file can be used to run simulation for different settings or trip data.  
-Alternatively, one can just run `post_processing_simulation_result.py` to see the results of the simulation under 2 different scenarios (plots above).
+- `publish-space.yml`: when the app or `vehicle_sim/` changes; runs the tests, uploads, and waits until the Space runs
+  the new commit
+- `publish-dataset.yml`: when the dataset card changes; uploads the card only. The data is not in git, so it is
+  published by hand (`./publish.sh "message" dataset`, from a local `data/data.csv`)
 
+## Notes
+
+- **How it works.** Power at the wheels comes from engine torque, gear ratio and transmission output speed. Brake power
+  isn't logged, so it is estimated as what is left after road load (rolling resistance and aerodynamic drag), grade
+  and inertia. The road-load coefficients are constants in `drive_cycle.py`, fitted by least squares on the whole
+  428 km log the stretch came from; the stretch alone is too uniform in speed to separate the two terms. The simulation passes the
+  demand through the driveline (98%), the electric machine (80%) and the battery (90%); regenerative braking works
+  above 10 km/h. At every stop long enough to plug in, the battery charges at the charger's power until full or until
+  the truck drives off. Power limits are not modelled: the stretch asks the battery for up to 351 kW.
+- **What it shows.** A 70 kWh battery with a charger that fills it in 8 hours runs out after 30 of the 58 km; 120 kWh
+  gets through with 3% left. The first two stops add little because the battery is still nearly full; the 57-minute
+  stop later in the day is the one that matters.
+- **Simplified and corrected (2026-10-27).** The component classes (controller, electric machine, battery) collapsed
+  into `simulation.battery_power`, since every power limit was infinite and every voltage 200 V; the results are
+  unchanged to machine precision. The road-load fit became fixed coefficients, which removed scikit-learn. Three
+  bugs were fixed: each stop charged for the *cumulative* charging time of all stops so far; the time to fill the
+  battery left out the charging efficiency, so no stop could take it past about 90% of the way to full; and the regen
+  cut-off compared wheel speed in rad/s with 10 km/h in m/s. Charger power is now an input rather than capacity / 8 h.
+- **The data** is the Hugging Face dataset `prteek/drive-cycle`, not part of the repository: no CSV is kept in git.
+  `vehicle_sim.drive_cycle.load()` reads `data/data.csv` if it is there and downloads it from the dataset otherwise.
+  It is only the stretch the app shows (3,831 seconds of driving), with only the columns the model uses and readable
+  names (described in the dataset card). The rest of the log, and the raw log with its GPS trace, are not published.

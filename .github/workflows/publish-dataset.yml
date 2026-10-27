@@ -1,0 +1,31 @@
+name: Publish dataset card
+
+# Only the card is published from CI: the data is not in git, so it is published by hand with
+# `./publish.sh "message" dataset`.
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - dataset/**
+      - .github/workflows/publish-dataset.yml
+  workflow_dispatch:
+
+concurrency:
+  group: publish-dataset
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HF_CLI: hf
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install huggingface_hub==2.3.0
+      - name: Upload the dataset card
+        run: ./publish.sh "Deploy ${GITHUB_SHA::7} from GitHub" dataset-card

@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.DS_Store
+# the raw log has a GPS trace: kept private, not in git or the dataset
+data/datalog.csv
+# no data in git: the driving data is the Hugging Face dataset prteek/drive-cycle
+*.csv
+*.csv.gz
